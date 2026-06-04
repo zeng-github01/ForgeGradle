@@ -22,8 +22,8 @@ group = 'net.minecraftforge.gradle'
 version = "${project.ext.GIT_INFO.tag}.${project.ext.GIT_INFO.offset}"
 println "Version $version"
 archivesBaseName = 'ForgeGradle'
-targetCompatibility = '1.6'
-sourceCompatibility = '1.6'
+targetCompatibility = '1.8'
+sourceCompatibility = '1.8'
 
 repositories {
     maven {

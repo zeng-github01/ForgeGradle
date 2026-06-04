@@ -19,7 +19,6 @@ import net.minecraftforge.gradle.delayed.DelayedFile;
 import net.minecraftforge.gradle.delayed.DelayedFileTree;
 import net.minecraftforge.gradle.delayed.DelayedString;
 import net.minecraftforge.gradle.json.MCVersionManifest;
-import net.minecraftforge.gradle.json.version.VersionToString;
 import net.minecraftforge.gradle.tasks.DownloadAssetsTask;
 import net.minecraftforge.gradle.tasks.ObtainFernFlowerTask;
 import net.minecraftforge.gradle.tasks.abstractutil.DownloadTask;
@@ -190,9 +189,9 @@ public abstract class BasePlugin<K extends BaseExtension> implements Plugin<Proj
         }
 
         class GetDataFromJson extends DelayedString {
-            private final VersionToString function;
+            private final Function<Version, String> function;
 
-            public GetDataFromJson(VersionToString function) {
+            public GetDataFromJson(Function<Version, String> function) {
                 super(BasePlugin.this.project, "");
                 this.function = function;
             }
@@ -214,12 +213,7 @@ public abstract class BasePlugin<K extends BaseExtension> implements Plugin<Proj
             task.dependsOn("getVersionJson");
 
             task.setOutput(delayedFile(Constants.JAR_CLIENT_FRESH));
-            task.setUrl(new GetDataFromJson(new VersionToString() {
-                @Override
-                public String apply(Version json) {
-                    return json.downloads.client.url;
-                }
-            }));
+            task.setUrl(new GetDataFromJson(json -> json.downloads.client.url));
 
 
         }
@@ -230,12 +224,7 @@ public abstract class BasePlugin<K extends BaseExtension> implements Plugin<Proj
             task.dependsOn("getVersionJson");
 
             task.setOutput(delayedFile(Constants.JAR_SERVER_FRESH));
-            task.setUrl(new GetDataFromJson(new VersionToString() {
-                @Override
-                public String apply(Version json) {
-                    return json.downloads.server.url;
-                }
-            }));
+            task.setUrl(new GetDataFromJson(json -> json.downloads.server.url));
 
 
         }
@@ -251,12 +240,7 @@ public abstract class BasePlugin<K extends BaseExtension> implements Plugin<Proj
             etagDlTask.getInputs().file(delayedFile(Constants.VERSION_JSON));
             etagDlTask.dependsOn("getVersionJson");
 
-            etagDlTask.setUrl(new GetDataFromJson(new VersionToString() {
-                @Override
-                public String apply(Version json) {
-                    return json.assetIndex.url;
-                }
-            }));
+            etagDlTask.setUrl(new GetDataFromJson(json -> json.assetIndex.url));
 
 
             etagDlTask.setFile(delayedFile(Constants.ASSETS + "/indexes/{ASSET_INDEX}.json"));
